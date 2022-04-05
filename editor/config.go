@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"os"
-
-	"github.com/sirupsen/logrus"
 )
 
 type OnLaunch string
@@ -37,11 +35,11 @@ func DefaultConfig() Config {
 
 // MustLoadConfig should only be used on desktop.
 // Logs error and return default config if there is one.
-func MustLoadConfig(logger logrus.Logger) (config Config) {
+func MustLoadConfig(logger Logger) (config Config) {
 	var err error
 	config, err = LoadConfig()
 	if err != nil {
-		logrus.Error("Failed to load config, default config will be used until manual reload:", err)
+		logger.Errorf("Failed to load config, default config will be used until manual reload: %s", err)
 	}
 	return
 }
