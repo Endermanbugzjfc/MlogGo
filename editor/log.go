@@ -16,4 +16,6 @@ type Logger interface {
 	Warnf(format string, args ...any)
 	Errorf(format string, args ...any)
 	Panicf(format string, args ...any)
+
+	SetDebugMode(enabled bool)
 }
