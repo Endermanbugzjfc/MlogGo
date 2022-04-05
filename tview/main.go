@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	configAtomic atomic.Value[Config]
+	configAtomic atomic.Value[editor.Config]
 )
 
 func makeHeader(text string) string {
@@ -27,6 +27,10 @@ func main() {
 	config := editor.MustLoadConfig(log)
 	configAtomic.Store(config)
 
+	config.LaunchEditor()
+	go func() {
+
+	}()
 	header := makeHeader("Make in Hong Kong \u1F1F")
 	box := tview.NewBox().
 		SetBorder(true).
