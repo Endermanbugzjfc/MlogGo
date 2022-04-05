@@ -4,7 +4,23 @@ import "github.com/sirupsen/logrus"
 
 func InitLogrus(logger *logrus.Logger) {
 	formatter := logrus.TextFormatter{
+		ForceColors:               false,
+		DisableColors:             false,
+		ForceQuote:                false,
+		DisableQuote:              false,
+		EnvironmentOverrideColors: false,
+		DisableTimestamp:          false,
+
 		FullTimestamp: true,
+
+		TimestampFormat:        "",
+		SortingFunc:            nil,
+		DisableSorting:         false,
+		DisableLevelTruncation: false,
+		PadLevelText:           false,
+		QuoteEmptyFields:       false,
+		FieldMap:               logrus.FieldMap{},
+		CallerPrettyfier:       nil,
 	}
 	logger.SetFormatter(&formatter)
 }

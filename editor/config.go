@@ -29,7 +29,8 @@ func DefaultConfig() Config {
 		ProjectPaths: []string{
 			dataPath + "projects",
 		},
-		OnLaunch: OpenLastProject,
+		OnLaunch:  OpenLastProject,
+		DebugMode: false,
 	}
 }
 
@@ -38,9 +39,11 @@ func DefaultConfig() Config {
 func MustLoadConfig(logger Logger) (config Config) {
 	var err error
 	config, err = LoadConfig()
+
 	if err != nil {
 		logger.Errorf("Failed to load config, default config will be used until manual reload: %s", err)
 	}
+
 	return
 }
 
@@ -50,12 +53,16 @@ func LoadConfig() (config Config, err error) {
 		usage        = "Raw JSON data or a file path."
 		defaultValue = dataPath + "config.json"
 	)
-	argument := *flag.String("config", defaultValue, usage)
+
+	argument := flag.String("config", defaultValue, usage)
 	config = DefaultConfig()
+
 	var data []byte
-	if data, err = os.ReadFile(argument); err != nil {
-		data = []byte(argument)
+	if data, err = os.ReadFile(*argument); err != nil {
+		data = []byte(*argument)
 	}
+
 	err = json.Unmarshal(data, &config)
+
 	return
 }
