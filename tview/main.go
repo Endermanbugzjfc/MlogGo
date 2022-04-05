@@ -23,7 +23,7 @@ func makeHeader(text string) string {
 
 func main() {
 	log := logrus.StandardLogger()
-	editor.InitLogger(log)
+	editor.InitLogrus(log)
 	config := editor.MustLoadConfig(log)
 	configAtomic.Store(config)
 
