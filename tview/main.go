@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 
+	"github.com/endermanbugzjfc/mloggo/editor"
 	"github.com/rivo/tview"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -15,6 +17,10 @@ func makeHeader(text string) string {
 }
 
 func main() {
+	log := logrus.StandardLogger()
+	editor.InitLogger(log)
+	editor.MustLoadConfig(log)
+
 	header := makeHeader("Make in Hong Kong \u1F1F")
 	box := tview.NewBox().
 		SetBorder(true).
