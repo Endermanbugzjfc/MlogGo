@@ -19,3 +19,20 @@ type Logger interface {
 
 	SetDebugMode(enabled bool)
 }
+
+func LogrusToEditorLogger(logger *logrus.Logger) Logger {
+	return logrusWrapper{logger}
+}
+
+type logrusWrapper struct {
+	*logrus.Logger
+}
+
+func (wrapper logrusWrapper) SetDebugMode(enabled bool) {
+	log := wrapper.Logger
+	if enabled {
+		log.SetLevel(logrus.TraceLevel)
+	} else {
+		log.SetLevel(logrus.InfoLevel)
+	}
+}
