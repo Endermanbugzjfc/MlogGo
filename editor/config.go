@@ -19,6 +19,7 @@ const (
 type Config struct {
 	ProjectPaths []string
 	OnLaunch     OnLaunch
+	DebugMode    bool
 }
 
 const (
