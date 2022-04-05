@@ -18,6 +18,26 @@ type Config struct {
 	ProjectPaths []string
 	OnLaunch     OnLaunch
 	DebugMode    bool
+	Keys         struct {
+		Read        KeySet
+		Write       KeySet
+		Draw        KeySet
+		Print       KeySet
+		DrawFlush   KeySet
+		PrintFlush  KeySet
+		GetLink     KeySet
+		Control     KeySet
+		Radar       KeySet
+		Sensor      KeySet
+		Set         KeySet
+		Operation   KeySet
+		End         KeySet
+		Jump        KeySet
+		UnitBind    KeySet
+		UnitControl KeySet
+		UnitRadar   KeySet
+		UnitLocate  KeySet
+	}
 }
 
 const (
@@ -31,6 +51,45 @@ func DefaultConfig() Config {
 		},
 		OnLaunch:  OpenLastProject,
 		DebugMode: false,
+		Keys: struct {
+			Read        KeySet
+			Write       KeySet
+			Draw        KeySet
+			Print       KeySet
+			DrawFlush   KeySet
+			PrintFlush  KeySet
+			GetLink     KeySet
+			Control     KeySet
+			Radar       KeySet
+			Sensor      KeySet
+			Set         KeySet
+			Operation   KeySet
+			End         KeySet
+			Jump        KeySet
+			UnitBind    KeySet
+			UnitControl KeySet
+			UnitRadar   KeySet
+			UnitLocate  KeySet
+		}{
+			Read:        "R",
+			Write:       "W",
+			Draw:        "D",
+			Print:       "T",
+			DrawFlush:   "FD",
+			PrintFlush:  "FT",
+			GetLink:     "G",
+			Control:     "C",
+			Radar:       "R",
+			Sensor:      "S",
+			Set:         "V", // Var.
+			Operation:   "A",
+			End:         "E",
+			Jump:        "FF", // If.
+			UnitBind:    "B",
+			UnitControl: "FC", // F is the only set that requires two keys.
+			UnitRadar:   "FR",
+			UnitLocate:  "FA",
+		},
 	}
 }
 
