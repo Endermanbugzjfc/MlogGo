@@ -1,6 +1,6 @@
 package editor
 
-func LaunchEditorByConfig(config Config, i Interface) {
+func LaunchByConfig(config Config, i Interface) {
 	log := i.GetLogger()
 	debug := config.DebugMode
 	log.SetDebugMode(debug)
