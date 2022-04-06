@@ -38,6 +38,8 @@ type Config struct {
 		UnitControl KeySet
 		UnitRadar   KeySet
 		UnitLocate  KeySet
+
+		SwitchCodeBlockList KeySet
 	}
 }
 
@@ -72,6 +74,8 @@ func DefaultConfig() Config {
 			UnitControl KeySet
 			UnitRadar   KeySet
 			UnitLocate  KeySet
+
+			SwitchCodeBlockList KeySet
 		}{
 			Read:        "r",
 			Write:       "w",
@@ -91,6 +95,8 @@ func DefaultConfig() Config {
 			UnitControl: "r", // F is the only set that requires two keys.
 			UnitRadar:   "d",
 			UnitLocate:  "e",
+
+			SwitchCodeBlockList: "W",
 		},
 	}
 }
