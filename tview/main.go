@@ -94,26 +94,26 @@ func main() {
 	}
 
 	addA.
-		AddItem("[pink]Read", "Read a number from a linked memory cell.", 'r', nil).
-		AddItem("[pink]Draw", "", 'w', nil).
-		AddItem("[red]Draw Flush", "Flush queued [yellow]Draw [green]operations to a displau.", 'f', nil).
-		AddItem("[red]Get Link", "", 'g', nil).
-		AddItem("[red]Radar", "", 'a', nil).
-		AddItem("[purple]Set", "", 's', nil).
-		AddItem("[blue]End", "", 'e', nil).
-		AddItem("[yellow]Unit Bind", "", 'b', nil).
-		AddItem("[yellow]Unit Radar", "", 'd', nil)
+		AddItem("[pink]Read", "Read a number from a linked memory cell.", 'r', addCodeBlock(0)).
+		AddItem("[pink]Draw", "", 'w', addCodeBlock(1)).
+		AddItem("[red]Draw Flush", "Flush queued [yellow]Draw [green]operations to a displau.", 'f', addCodeBlock(2)).
+		AddItem("[red]Get Link", "", 'g', addCodeBlock(3)).
+		AddItem("[red]Radar", "", 'a', addCodeBlock(4)).
+		AddItem("[purple]Set", "", 's', addCodeBlock(5)).
+		AddItem("[blue]End", "", 'e', addCodeBlock(6)).
+		AddItem("[yellow]Unit Bind", "", 'b', addCodeBlock(7)).
+		AddItem("[yellow]Unit Radar", "", 'd', addCodeBlock(8))
 
 	addB.
-		AddItem("[pink]Write", "Write a number to a linked memory cell.", 'w', nil).
-		AddItem("[pink]Print", "", 't', nil).
-		AddItem("[red]Print Flush", "", 'f', nil).
-		AddItem("[red]Control", "", 'c', nil).
-		AddItem("[red]Sensor", "", 's', nil).
-		AddItem("[purple]Operation", "", 'a', nil).
-		AddItem("[blue]Jump", "", 'g', nil).
-		AddItem("[yellow]Unit Control", "", 'r', nil).
-		AddItem("[yellow]Unit Locate", "", 'e', nil).
+		AddItem("[pink]Write", "Write a number to a linked memory cell.", 'w', addCodeBlock(9)).
+		AddItem("[pink]Print", "", 't', addCodeBlock(10)).
+		AddItem("[red]Print Flush", "", 'f', addCodeBlock(11)).
+		AddItem("[red]Control", "", 'c', addCodeBlock(12)).
+		AddItem("[red]Sensor", "", 's', addCodeBlock(13)).
+		AddItem("[purple]Operation", "", 'a', addCodeBlock(14)).
+		AddItem("[blue]Jump", "", 'g', addCodeBlock(15)).
+		AddItem("[yellow]Unit Control", "", 'r', addCodeBlock(16)).
+		AddItem("[yellow]Unit Locate", "", 'e', addCodeBlock(17)).
 		Blur()
 
 	if err := app.
@@ -121,5 +121,31 @@ func main() {
 		SetFocus(addA).
 		Run(); err != nil {
 		panic(err)
+	}
+}
+
+func addCodeBlock(codeBlockType int) func() {
+	// TODO: Replace type with enum.
+	asyncRemoveItemChannel := make(chan struct{})
+	go func(asyncRemoveItemChannel chan struct{}) {
+		<-asyncRemoveItemChannel
+		root.RemoveItem(add)
+
+		block := tview.NewFlex()
+		block.SetBorder(true)
+		switch codeBlockType {
+		}
+
+		block.SetTitleAlign(tview.AlignLeft)
+		block.AddItem(tview.NewBox(), 0, 1, false)
+		root.AddItem(block, 0, 1, false)
+		app.SetFocus(block)
+	}(asyncRemoveItemChannel)
+
+	return func() {
+		select {
+		case asyncRemoveItemChannel <- struct{}{}:
+		default:
+		}
 	}
 }
