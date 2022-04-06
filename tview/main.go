@@ -31,6 +31,7 @@ func main() {
 	log := editor.LogrusToEditorLogger(logrusLogger)
 	config := editor.MustLoadConfig(log)
 	configAtomic.Store(config)
+	defaultKeys := editor.DefaultConfig().Keys
 	// header := makeHeader("Make in Hong Kong \u1F1F")
 
 	// box.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
@@ -60,6 +61,7 @@ func main() {
 	addB := tview.NewList()
 	add.AddItem(addB, 0, 1, false)
 
+	keys := config.Keys
 	for _, box := range [2]*tview.List{
 		addA,
 		addB,
@@ -70,7 +72,7 @@ func main() {
 				SetFocusFunc(func() {
 					box.
 						SetBackgroundColor(colour).
-						SetTitle("(<Shift>W: Go to the other side.)").
+						SetTitle(fmt.Sprintf("(%s: Go to the other side.)", keys.SwitchCodeBlockList)).
 						SetBorder(true)
 				}).
 				SetBlurFunc(func() {
@@ -94,26 +96,26 @@ func main() {
 	}
 
 	addA.
-		AddItem("[pink]Read", "Read a number from a linked memory cell.", 'r', addCodeBlock(0)).
-		AddItem("[pink]Draw", "", 'w', addCodeBlock(1)).
-		AddItem("[red]Draw Flush", "Flush queued [yellow]Draw [green]operations to a displau.", 'f', addCodeBlock(2)).
-		AddItem("[red]Get Link", "", 'g', addCodeBlock(3)).
-		AddItem("[red]Radar", "", 'a', addCodeBlock(4)).
-		AddItem("[purple]Set", "", 's', addCodeBlock(5)).
-		AddItem("[blue]End", "", 'e', addCodeBlock(6)).
-		AddItem("[yellow]Unit Bind", "", 'b', addCodeBlock(7)).
-		AddItem("[yellow]Unit Radar", "", 'd', addCodeBlock(8))
+		AddItem("[pink]Read", "Read a number from a linked memory cell.", keys.Read.GetRune(log, rune(defaultKeys.Read[0])), addCodeBlock(0)).
+		AddItem("[pink]Draw", "", keys.Draw.GetRune(log, rune(defaultKeys.Draw[0])), addCodeBlock(1)).
+		AddItem("[red]Draw Flush", "Flush queued [yellow]Draw [green]operations to a displau.", keys.DrawFlush.GetRune(log, rune(defaultKeys.DrawFlush[0])), addCodeBlock(2)).
+		AddItem("[red]Get Link", "", keys.GetLink.GetRune(log, rune(defaultKeys.GetLink[0])), addCodeBlock(3)).
+		AddItem("[red]Radar", "", keys.Radar.GetRune(log, rune(defaultKeys.Radar[0])), addCodeBlock(4)).
+		AddItem("[purple]Set", "", keys.Set.GetRune(log, rune(defaultKeys.Set[0])), addCodeBlock(5)).
+		AddItem("[blue]End", "", keys.End.GetRune(log, rune(defaultKeys.End[0])), addCodeBlock(6)).
+		AddItem("[yellow]Unit Bind", "", keys.UnitBind.GetRune(log, rune(defaultKeys.UnitBind[0])), addCodeBlock(7)).
+		AddItem("[yellow]Unit Radar", "", keys.UnitRadar.GetRune(log, rune(defaultKeys.UnitRadar[0])), addCodeBlock(8))
 
 	addB.
-		AddItem("[pink]Write", "Write a number to a linked memory cell.", 'w', addCodeBlock(9)).
-		AddItem("[pink]Print", "", 't', addCodeBlock(10)).
-		AddItem("[red]Print Flush", "", 'f', addCodeBlock(11)).
-		AddItem("[red]Control", "", 'c', addCodeBlock(12)).
-		AddItem("[red]Sensor", "", 's', addCodeBlock(13)).
-		AddItem("[purple]Operation", "", 'a', addCodeBlock(14)).
-		AddItem("[blue]Jump", "", 'g', addCodeBlock(15)).
-		AddItem("[yellow]Unit Control", "", 'r', addCodeBlock(16)).
-		AddItem("[yellow]Unit Locate", "", 'e', addCodeBlock(17)).
+		AddItem("[pink]Write", "Write a number to a linked memory cell.", keys.Write.GetRune(log, rune(defaultKeys.Write[0])), addCodeBlock(9)).
+		AddItem("[pink]Print", "", keys.Print.GetRune(log, rune(defaultKeys.Print[0])), addCodeBlock(10)).
+		AddItem("[red]Print Flush", "", keys.PrintFlush.GetRune(log, rune(defaultKeys.PrintFlush[0])), addCodeBlock(11)).
+		AddItem("[red]Control", "", keys.Control.GetRune(log, rune(defaultKeys.Control[0])), addCodeBlock(12)).
+		AddItem("[red]Sensor", "", keys.Sensor.GetRune(log, rune(defaultKeys.Sensor[0])), addCodeBlock(13)).
+		AddItem("[purple]Operation", "", keys.Operation.GetRune(log, rune(defaultKeys.Operation[0])), addCodeBlock(14)).
+		AddItem("[blue]Jump", "", keys.Jump.GetRune(log, rune(defaultKeys.Jump[0])), addCodeBlock(15)).
+		AddItem("[yellow]Unit Control", "", keys.UnitControl.GetRune(log, rune(defaultKeys.UnitControl[0])), addCodeBlock(16)).
+		AddItem("[yellow]Unit Locate", "", keys.UnitLocate.GetRune(log, rune(defaultKeys.UnitLocate[0])), addCodeBlock(17)).
 		Blur()
 
 	if err := app.
