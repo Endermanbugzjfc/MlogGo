@@ -16,6 +16,9 @@ const (
 
 var (
 	configAtomic atomic.Value[editor.Config]
+
+	app       *tview.Application
+	root, add *tview.Flex
 )
 
 func makeHeader(text string) string {
@@ -36,9 +39,14 @@ func main() {
 	// 	return event
 	// })
 
-	app := tview.NewApplication()
-	root := tview.NewFlex().SetFullScreen(true)
-	add := tview.NewFlex()
+	app = tview.NewApplication()
+	root = tview.
+		NewFlex().
+		SetFullScreen(true).
+		SetDirection(tview.FlexRow)
+	root.SetBackgroundColor(tview.Styles.PrimitiveBackgroundColor)
+
+	add = tview.NewFlex()
 	root.AddItem(add, 0, 1, false)
 
 	add.
