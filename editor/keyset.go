@@ -36,5 +36,16 @@ func (keyset KeySet) MatchTcellEventKey(event *tcell.EventKey) bool {
 
 	name = strings.ToLower(name)
 	keysetString = strings.ToLower(keysetString)
+
 	return name == keysetString
+}
+
+func (keyset KeySet) GetRune(logger Logger, defaultKey rune) rune {
+	if len(keyset) > 1 {
+		logger.Errorf("Complex or Vim keysets cannot be used in list shortcut, default key \"%s\" will be used.")
+
+		return defaultKey
+	}
+
+	return rune(keyset[0])
 }
