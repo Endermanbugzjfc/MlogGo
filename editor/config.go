@@ -73,24 +73,24 @@ func DefaultConfig() Config {
 			UnitRadar   KeySet
 			UnitLocate  KeySet
 		}{
-			Read:        "R",
-			Write:       "W",
-			Draw:        "D",
-			Print:       "T",
-			DrawFlush:   "FD",
-			PrintFlush:  "FT",
-			GetLink:     "G",
-			Control:     "C",
-			Radar:       "R",
-			Sensor:      "S",
-			Set:         "V", // Var.
-			Operation:   "A",
-			End:         "E",
-			Jump:        "FF", // If.
-			UnitBind:    "B",
-			UnitControl: "FC", // F is the only set that requires two keys.
-			UnitRadar:   "FR",
-			UnitLocate:  "FA",
+			Read:        "r",
+			Write:       "w",
+			Draw:        "w",
+			Print:       "t",
+			DrawFlush:   "f",
+			PrintFlush:  "f",
+			GetLink:     "g",
+			Control:     "c",
+			Radar:       "a",
+			Sensor:      "s",
+			Set:         "s", // Var.
+			Operation:   "a",
+			End:         "e",
+			Jump:        "g", // If.
+			UnitBind:    "b",
+			UnitControl: "r", // F is the only set that requires two keys.
+			UnitRadar:   "d",
+			UnitLocate:  "e",
 		},
 	}
 }
