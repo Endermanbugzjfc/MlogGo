@@ -58,15 +58,30 @@ func main() {
 	} {
 		func(box *tview.List) {
 			colour := box.GetBackgroundColor()
-			box.SetFocusFunc(func() {
-				box.SetBackgroundColor(colour)
-				box.SetTitle("(h / l: Go to the other side.)")
-				box.SetBorder(true)
-			})
-			box.SetBlurFunc(func() {
-				box.SetBackgroundColor(tcell.ColorDarkGray)
-				box.SetTitle("")
-			})
+			box.
+				SetFocusFunc(func() {
+					box.
+						SetBackgroundColor(colour).
+						SetTitle("(<Shift>W: Go to the other side.)").
+						SetBorder(true)
+				}).
+				SetBlurFunc(func() {
+					box.
+						SetBackgroundColor(tcell.ColorDarkGray).
+						SetTitle("")
+				}).
+				SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+					// TODO: Customise key in config.
+					if event.Rune() == 'W' {
+						if box == addA {
+							app.SetFocus(addB)
+						} else {
+							app.SetFocus(addA)
+						}
+					}
+
+					return event
+				})
 		}(box)
 	}
 
