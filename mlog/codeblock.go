@@ -6,6 +6,6 @@ type CodeBlock interface {
 	// Identifier will be used in compiled code.
 	Identifier() string
 	DisplayName(lang language.Tag) string
-	ColourHex() int32
-	ColourNameTview() string
+	Colour() int32
+	ColourTview() int32
 }
