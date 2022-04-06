@@ -18,6 +18,7 @@ type Config struct {
 	ProjectPaths []string
 	OnLaunch     OnLaunch
 	DebugMode    bool
+	CompactView  bool
 	Keys         struct {
 		Read        KeySet
 		Write       KeySet
@@ -49,8 +50,9 @@ func DefaultConfig() Config {
 		ProjectPaths: []string{
 			dataPath + "projects",
 		},
-		OnLaunch:  OpenLastProject,
-		DebugMode: false,
+		OnLaunch:    OpenLastProject,
+		DebugMode:   false,
+		CompactView: true,
 		Keys: struct {
 			Read        KeySet
 			Write       KeySet
