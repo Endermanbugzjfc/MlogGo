@@ -13,14 +13,6 @@ type CodeBlock interface {
 	ColourTview() int32
 }
 
-const (
-	pink   = 0xA08A8A
-	red    = 0xD4816B
-	purple = 0x877BAD
-	blue   = 0x6BB2B2
-	yellow = 0xC7B59D
-)
-
 var (
 	pinkTview   = tcell.GetColor("pink").Hex()
 	redTview    = tcell.GetColor("red").Hex()
@@ -28,3 +20,53 @@ var (
 	blueTview   = tcell.GetColor("blue").Hex()
 	yellowTview = tcell.GetColor("yellow").Hex()
 )
+
+type CodeBlockPink struct {
+}
+
+func (CodeBlockPink) Colour() int32 {
+	return 0xA08A8A
+}
+func (CodeBlockPink) ColourHex() int32 {
+	return pinkTview
+}
+
+type CodeBlockRed struct {
+}
+
+func (CodeBlockRed) Colour() int32 {
+	return 0xD4816B
+}
+func (CodeBlockRed) ColourHex() int32 {
+	return redTview
+}
+
+type CodeBlockPurple struct {
+}
+
+func (CodeBlockPurple) Colour() int32 {
+	return 0x877BAD
+}
+func (CodeBlockPurple) ColourHex() int32 {
+	return purpleTview
+}
+
+type CodeBlockBlue struct {
+}
+
+func (CodeBlockBlue) Colour() int32 {
+	return 0x6BB2B2
+}
+func (CodeBlockBlue) ColourHex() int32 {
+	return blueTview
+}
+
+type CodeBlockYellow struct {
+}
+
+func (CodeBlockYellow) Colour() int32 {
+	return 0xC7B59D
+}
+func (CodeBlockYellow) ColourHex() int32 {
+	return yellowTview
+}
