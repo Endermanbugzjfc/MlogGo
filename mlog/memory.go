@@ -16,6 +16,10 @@ func (Read) DisplayName(lang language.Tag) string {
 	panic("implement me") // TODO: Get display name from Mindustry language file.
 }
 
+func (Read) Description(lang language.Tag) string {
+	panic("implement me") // TODO: Get description from Mindustry language file.
+}
+
 type Write struct {
 	CodeBlockPink
 }
@@ -26,4 +30,8 @@ func (Write) Identifier() string {
 
 func (Write) DisplayName(lang language.Tag) string {
 	panic("implement me") // TODO: Get display name from Mindustry language file.
+}
+
+func (Write) Description(lang language.Tag) string {
+	panic("implement me") // TODO: Get description from Mindustry language file.
 }
