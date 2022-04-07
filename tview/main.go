@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 
 	"github.com/df-mc/atomic"
@@ -26,10 +27,15 @@ func makeHeader(text string) string {
 }
 
 func main() {
+	configArgument := editor.GetConfigArgument()
+
+	flag.Parse()
+
 	logrusLogger := logrus.StandardLogger()
 	editor.InitLogrus(logrusLogger)
 	log := editor.LogrusToEditorLogger(logrusLogger)
-	config := editor.MustLoadConfig(log)
+
+	config := editor.MustLoadConfig(log, *configArgument)
 	configAtomic.Store(config)
 	defaultKeys := editor.DefaultConfig().Keys
 	// header := makeHeader("Make in Hong Kong \u1F1F")
