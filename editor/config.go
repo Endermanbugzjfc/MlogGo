@@ -103,9 +103,12 @@ func DefaultConfig() Config {
 
 // MustLoadConfig should only be used on desktop.
 // Logs error and return default config if there is one.
-func MustLoadConfig(logger Logger) (config Config) {
+func MustLoadConfig(
+	logger Logger,
+	configArgument string,
+) (config Config) {
 	var err error
-	config, err = LoadConfig()
+	config, err = LoadConfig(configArgument)
 
 	if err != nil {
 		logger.Errorf("Failed to load config, default config will be used until manual reload: %s", err)
@@ -114,19 +117,23 @@ func MustLoadConfig(logger Logger) (config Config) {
 	return
 }
 
-// LoadConfig should only be used on desktop.
-func LoadConfig() (config Config, err error) {
+// GetConfigArgument must be called and only before flag.Parse().
+func GetConfigArgument() *string {
 	const (
 		usage        = "Raw JSON data or a file path."
 		defaultValue = dataPath + "config.json"
 	)
 
-	argument := flag.String("config", defaultValue, usage)
+	return flag.String("config", defaultValue, usage)
+}
+
+// LoadConfig should only be used on desktop.
+func LoadConfig(configArgument string) (config Config, err error) {
 	config = DefaultConfig()
 
 	var data []byte
-	if data, err = os.ReadFile(*argument); err != nil {
-		data = []byte(*argument)
+	if data, err = os.ReadFile(configArgument); err != nil {
+		data = []byte(configArgument)
 	}
 
 	err = json.Unmarshal(data, &config)
