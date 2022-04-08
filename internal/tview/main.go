@@ -4,8 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/df-mc/atomic"
-	"github.com/endermanbugzjfc/mloggo/editor"
+	"github.com/endermanbugzjfc/mloggo/pkg/editor"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/sirupsen/logrus"
@@ -16,8 +15,6 @@ const (
 )
 
 var (
-	configAtomic atomic.Value[editor.Config]
-
 	app       *tview.Application
 	root, add *tview.Flex
 )
@@ -36,7 +33,6 @@ func main() {
 	log := editor.LogrusToEditorLogger(logrusLogger)
 
 	config := editor.MustLoadConfig(log, *configArgument)
-	configAtomic.Store(config)
 	defaultKeys := editor.DefaultConfig().Keys
 	// header := makeHeader("Make in Hong Kong \u1F1F")
 
@@ -68,6 +64,7 @@ func main() {
 	add.AddItem(addB, 0, 1, false)
 
 	keys := config.Keys
+
 	for _, box := range [2]*tview.List{
 		addA,
 		addB,
