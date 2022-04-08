@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"flag"
 	"os"
+
+	"github.com/df-mc/atomic"
 )
 
 type OnLaunch string
@@ -12,6 +14,10 @@ const (
 	OpenLastProject OnLaunch = "open-last-project"
 	NewEmptyProject          = "new-empty-project"
 	ListProjects             = "list-projects"
+)
+
+var (
+	ConfigAtomic atomic.Value[Config]
 )
 
 type Config struct {
@@ -102,6 +108,9 @@ func DefaultConfig() Config {
 }
 
 // MustLoadConfig should only be used on desktop.
+// Stores the loaded config to variable ConfigAtomic.
+// Or stores the default config if there is an error.
+// So it does not have to be stored in an external package.
 // Logs error and return default config if there is one.
 func MustLoadConfig(
 	logger Logger,
@@ -128,6 +137,9 @@ func GetConfigArgument() *string {
 }
 
 // LoadConfig should only be used on desktop.
+// Stores the loaded config to variable ConfigAtomic.
+// Or stores the default config if there is an error.
+// So it does not have to be stored in an external package.
 func LoadConfig(configArgument string) (config Config, err error) {
 	config = DefaultConfig()
 
@@ -137,6 +149,8 @@ func LoadConfig(configArgument string) (config Config, err error) {
 	}
 
 	err = json.Unmarshal(data, &config)
+
+	ConfigAtomic.Store(config)
 
 	return
 }
