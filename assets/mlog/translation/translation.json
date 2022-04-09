@@ -1,0 +1,25 @@
+{
+	"CodeBlock": {
+		"DisplayName": {
+			"Read": "Read",
+			"Write": "Write",
+			"Print": "Print",
+			"Draw": "Draw",
+			"DrawFlush": "Draw Flush",
+			"PrintFlush": "Print Flush",
+			"GetLink": "Get Link",
+			"Control": "Control",
+			"Radar": "Radar",
+			"Sensor": "Sensor",
+			"Set": "Set",
+			"Operation": "Operation",
+			"End": "End",
+			"Wait": "Wait",
+			"Jump": "Jump",
+			"UnitBind": "Unit Bind",
+			"UnitControl": "Unit Control",
+			"UnitRadar": "Unit Radar",
+			"UnitLocate": "Unit Locate",
+		}
+	}
+}
