@@ -14,7 +14,7 @@ import (
 // at the END of each cycle.
 func marqueeTitle(
 	app *tview.Application,
-	sync <-chan func() bool,
+	syncChannel <-chan func() bool,
 	box *tview.Box,
 	useInnerWidth bool,
 	prefix, text string,
@@ -94,7 +94,7 @@ func marqueeTitle(
 
 		select {
 		case <-t.C:
-		case syncFunc := <-sync:
+		case syncFunc := <-syncChannel:
 			if syncFunc == nil || !syncFunc() {
 				t.Stop()
 
