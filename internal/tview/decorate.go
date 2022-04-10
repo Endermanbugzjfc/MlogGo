@@ -49,10 +49,8 @@ func marqueeTitle(
 			continue
 		}
 
-		last := []rune{mbTextShift[mbTextLength-1]}
-		allExceptLast := mbTextShift[:mbTextLength-1]
-		mbTextShift = append(last, allExceptLast...)
-
+		mbTextShift = append(mbTextShift[1:], mbTextShift[0])
+		logger.Infof("%s", string(mbTextShift))
 		var (
 			titleNew string
 			ok       bool
