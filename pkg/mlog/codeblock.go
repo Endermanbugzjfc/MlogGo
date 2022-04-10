@@ -1,9 +1,13 @@
 package mlog
 
 import (
+	"github.com/df-mc/atomic"
+
 	"github.com/gdamore/tcell/v2"
 	"golang.org/x/text/language"
 )
+
+var CodeBlocks atomic.Value[[]CodeBlock]
 
 type CodeBlock interface {
 	// Identifier will be used in compiled code.
@@ -30,7 +34,7 @@ func (CodeBlockPink) Colour() int32 {
 	return 0xA08A8A
 }
 
-func (CodeBlockPink) ColourHex() int32 {
+func (CodeBlockPink) ColourTview() int32 {
 	return pinkTview
 }
 
@@ -41,7 +45,7 @@ func (CodeBlockRed) Colour() int32 {
 	return 0xD4816B
 }
 
-func (CodeBlockRed) ColourHex() int32 {
+func (CodeBlockRed) ColourTview() int32 {
 	return redTview
 }
 
@@ -52,7 +56,7 @@ func (CodeBlockPurple) Colour() int32 {
 	return 0x877BAD
 }
 
-func (CodeBlockPurple) ColourHex() int32 {
+func (CodeBlockPurple) ColourTview() int32 {
 	return purpleTview
 }
 
@@ -63,7 +67,7 @@ func (CodeBlockBlue) Colour() int32 {
 	return 0x6BB2B2
 }
 
-func (CodeBlockBlue) ColourHex() int32 {
+func (CodeBlockBlue) ColourTview() int32 {
 	return blueTview
 }
 
@@ -74,6 +78,6 @@ func (CodeBlockYellow) Colour() int32 {
 	return 0xC7B59D
 }
 
-func (CodeBlockYellow) ColourHex() int32 {
+func (CodeBlockYellow) ColourTview() int32 {
 	return yellowTview
 }
