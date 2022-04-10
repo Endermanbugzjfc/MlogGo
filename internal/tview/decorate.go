@@ -14,8 +14,8 @@ import (
 // at the END of each cycle.
 func marqueeTitle(
 	app *tview.Application,
-	syncChannel <-chan func() bool,
 	box *tview.Box,
+	syncChannel <-chan func() bool,
 	useInnerWidth bool,
 	prefix, text string,
 ) {
