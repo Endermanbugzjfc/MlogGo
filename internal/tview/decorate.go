@@ -19,12 +19,19 @@ func marqueeTitle(
 	useInnerWidth bool,
 	prefix, text string,
 ) {
+	firstUpdate := make(chan struct{})
+	app.QueueUpdate(func() {
+		close(firstUpdate)
+	})
+	<-firstUpdate
+
 	title := prefix + text
 	titleWidth := tview.TaggedStringWidth(title)
 	mbText := []rune(text)
 	mbTextLength := len(mbText)
 	logger := editor.GetLogger()
 
+	box.SetTitle(title)
 	const mbTextMin = 2
 	if mbTextLength < mbTextMin {
 		logger.Debugf(
