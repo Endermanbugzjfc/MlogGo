@@ -31,7 +31,6 @@ func marqueeTitle(
 	mbTextLength := len(mbText)
 	logger := editor.GetLogger()
 
-	box.SetTitle(title)
 	const mbTextMin = 2
 	if mbTextLength < mbTextMin {
 		logger.Debugf(
@@ -43,8 +42,9 @@ func marqueeTitle(
 		return
 	}
 
-	t := time.NewTicker(time.Second / 2) // TODO: User-changable.
-	mbTextShift := mbText
+	t := time.NewTicker(time.Second / 3) // TODO: User-changable.
+	mbText = append(mbText, ' ')
+	rolled := true
 	for {
 		var boxWidth int
 		if useInnerWidth {
@@ -53,17 +53,22 @@ func marqueeTitle(
 			_, _, boxWidth, _ = box.GetRect()
 		}
 		if titleWidth <= boxWidth {
+			if rolled {
+				rolled = false
+				box.SetTitle(title)
+				app.Draw()
+			}
 			continue
 		}
+		rolled = true
 
-		mbTextShift = append(mbTextShift[1:], mbTextShift[0])
-		logger.Infof("%s", string(mbTextShift))
+		mbText = append(mbText[1:], mbText[0])
 		var (
 			titleNew string
 			ok       bool
 		)
 		for trim := 0; trim < mbTextLength; trim++ {
-			mbTextTrim := mbTextShift[:mbTextLength-trim]
+			mbTextTrim := mbText[:mbTextLength-trim]
 			titleTrim := prefix + string(mbTextTrim)
 			titleTrimLength := tview.TaggedStringWidth(titleTrim)
 			if titleTrimLength <= boxWidth {
