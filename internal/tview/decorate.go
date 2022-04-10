@@ -7,74 +7,89 @@ import (
 	"github.com/rivo/tview"
 )
 
+// marqueeTitle stops when sync channel closes,
+// sync function is nil or returns false.
+// Sync channel will try to receive value
+// at the END of each cycle.
+// Also should be called in its OWN GOROUTINE.
 func marqueeTitle(
+	app *tview.Application,
+	sync <-chan func() bool,
 	box *tview.Box,
+	useInnerWidth bool,
 	prefix, text string,
-) (stop chan<- struct{}) {
+) {
 	title := prefix + text
 	titleWidth := tview.TaggedStringWidth(title)
 	mbText := []rune(text)
 	mbTextLength := len(mbText)
-	notShort := mbTextLength > 1
-	stopUnsafe := make(chan struct{})
-	stop = stopUnsafe
-	_, _, boxWidth, _ := box.GetRect()
-
 	logger := editor.GetLogger()
-	cannotFit := func(title string) {
-		logger.Warnf(
-			"Not enough space to fit marquee title: %s",
-			title,
-		)
+
+	const mbTextMin = 2
+	if mbTextLength < mbTextMin {
 		logger.Debugf(
-			"Total text width %d is greater than box wdith: %d.",
-			tview.TaggedStringWidth(title),
-			boxWidth,
+			"Text is too short for marquee (%d runes, require at least %d): %s",
+			mbTextLength,
+			mbTextMin,
+			text,
 		)
+		return
 	}
 
-	if notShort && titleWidth > boxWidth {
-		go func(stop chan struct{}) {
-			t := time.NewTicker(time.Second) // TODO: User-changable.
-			mbTextShift := mbText
-			for {
-				last := []rune{mbTextShift[mbTextLength-1]}
-				allExceptLast := mbTextShift[:mbTextLength-1]
-				mbTextShift = append(last, allExceptLast...)
+	t := time.NewTicker(time.Second / 2) // TODO: User-changable.
+	mbTextShift := mbText
+	for {
+		var boxWidth int
+		if useInnerWidth {
+			_, _, boxWidth, _ = box.GetInnerRect()
+		} else {
+			_, _, boxWidth, _ = box.GetRect()
+		}
+		if titleWidth <= boxWidth {
+			continue
+		}
 
-				var (
-					titleNew string
-					ok       bool
-				)
-				for trim := 0; trim < mbTextLength; trim++ {
-					mbTextTrim := mbTextShift[:mbTextLength-trim]
-					titleTrim := prefix + string(mbTextTrim)
-					titleTrimLength := tview.TaggedStringWidth(titleTrim)
-					if titleTrimLength <= boxWidth {
-						titleNew = titleTrim
-						ok = true
-						box.SetTitle(titleNew)
-						break
-					}
-				}
+		last := []rune{mbTextShift[mbTextLength-1]}
+		allExceptLast := mbTextShift[:mbTextLength-1]
+		mbTextShift = append(last, allExceptLast...)
 
-				if !ok {
-					cannotFit(titleNew)
-				}
-
-				select {
-				case <-t.C:
-				case <-stop:
-					t.Stop()
-					return
-				}
+		var (
+			titleNew string
+			ok       bool
+		)
+		for trim := 0; trim < mbTextLength; trim++ {
+			mbTextTrim := mbTextShift[:mbTextLength-trim]
+			titleTrim := prefix + string(mbTextTrim)
+			titleTrimLength := tview.TaggedStringWidth(titleTrim)
+			if titleTrimLength <= boxWidth {
+				titleNew = titleTrim
+				ok = true
+				app.Draw()
+				break
 			}
-		}(stopUnsafe)
-	} else if !notShort {
-		cannotFit(title)
-	}
-	box.SetTitle(title)
+		}
 
-	close(stop)
-	return
+		box.SetTitle(titleNew)
+		if !ok {
+			logger.Warnf(
+				"Not enough space to fit marquee title: %s",
+				titleNew,
+			)
+			logger.Debugf(
+				"Total text width %d is greater than box wdith %d.",
+				tview.TaggedStringWidth(titleNew),
+				boxWidth,
+			)
+		}
+
+		select {
+		case <-t.C:
+		case syncFunc := <-sync:
+			if syncFunc == nil || !syncFunc() {
+				t.Stop()
+
+				return
+			}
+		}
+	}
 }
