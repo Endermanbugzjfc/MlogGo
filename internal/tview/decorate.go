@@ -7,11 +7,11 @@ import (
 	"github.com/rivo/tview"
 )
 
-// marqueeTitle stops when sync channel closes,
+// marqueeTitle should be called in its OWN GOROUTINE.
+// The goroutine terminates when sync channel closes,
 // sync function is nil or returns false.
 // Sync channel will try to receive value
 // at the END of each cycle.
-// Also should be called in its OWN GOROUTINE.
 func marqueeTitle(
 	app *tview.Application,
 	sync <-chan func() bool,
