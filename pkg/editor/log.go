@@ -52,3 +52,7 @@ func (wrapper logrusWrapper) SetDebugMode(enabled bool) {
 		log.SetLevel(logrus.InfoLevel)
 	}
 }
+
+func GetLogger() Logger {
+	panic("implement me") // TODO: GetLogger().
+}
