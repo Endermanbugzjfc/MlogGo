@@ -20,8 +20,8 @@ func (Read) Description(lang language.Tag) string {
 	panic("implement me") // TODO: Get description from Mindustry language file.
 }
 
-func (Read) Parse(parts []string) []CodeBlockPart {
-	panic("implement me") // TODO: Parse()
+func (Read) ParseParts(parts []string) []CodeBlockPart {
+	panic("implement me") // TODO: ParseParts()
 }
 
 type Write struct {
@@ -40,6 +40,6 @@ func (Write) Description(lang language.Tag) string {
 	panic("implement me") // TODO: Get description from Mindustry language file.
 }
 
-func (Write) Parse(parts []string) []CodeBlockPart {
-	panic("implement me") // TODO: Parse()
+func (Write) ParseParts(parts []string) []CodeBlockPart {
+	panic("implement me") // TODO: ParseParts()
 }

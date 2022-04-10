@@ -1,13 +1,57 @@
 package mlog
 
 import (
-	"github.com/df-mc/atomic"
+	"strings"
+	"sync"
 
 	"github.com/gdamore/tcell/v2"
 	"golang.org/x/text/language"
 )
 
-var CodeBlocks atomic.Value[[]CodeBlock]
+// RegisterCodeBlock returns the overrided code block
+// if it has the same identifier as the given one.
+// Default code blocks will ALWAYS be overriden
+// by externally registered code blocks.
+func RegisterCodeBlock(codeBlock CodeBlock) (override CodeBlock) {
+	codeBlocksMu.Lock()
+	defer codeBlocksMu.Unlock()
+
+	identifier := codeBlock.Identifier()
+	identifier = strings.ToLower(identifier)
+	override = codeBlocks[identifier]
+	if override != nil {
+		for _, defaultCodeBlock := range defaultCodeBlocks {
+			if override == defaultCodeBlock {
+				return
+			}
+		}
+	}
+	codeBlocks[identifier] = codeBlock
+
+	return
+}
+
+func FindCodeBlockByIdentifier(identifier string) (codeBlock CodeBlock) {
+	// TODO: Match case argument?
+	codeBlocksMu.RLock()
+	defer codeBlocksMu.RUnlock()
+
+	codeBlock = codeBlocks[identifier]
+
+	return
+}
+
+// TODO: GetCodeBlocks()?
+
+var (
+	codeBlocks   = map[string]CodeBlock{}
+	codeBlocksMu sync.RWMutex
+
+	defaultCodeBlocks = [18]CodeBlock{
+		Read{},
+		Write{},
+	}
+)
 
 type CodeBlock interface {
 	// Identifier will be used in compiled code.
@@ -17,7 +61,7 @@ type CodeBlock interface {
 
 	DisplayName(lang language.Tag) string
 	Description(lang language.Tag) string
-	Parse(parts []string) []CodeBlockPart
+	ParseParts(parts []string) []CodeBlockPart
 }
 
 type CodeBlockPart interface {
