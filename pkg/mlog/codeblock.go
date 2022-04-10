@@ -17,6 +17,7 @@ type CodeBlock interface {
 
 	DisplayName(lang language.Tag) string
 	Description(lang language.Tag) string
+	Parse(parts []string) []CodeBlockPart
 }
 
 type CodeBlockPart interface {
