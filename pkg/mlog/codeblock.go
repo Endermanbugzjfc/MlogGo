@@ -19,6 +19,11 @@ type CodeBlock interface {
 	Description(lang language.Tag) string
 }
 
+type CodeBlockPart interface {
+	Label(lang language.Tag) string
+	Note(lang language.Tag) string
+}
+
 var (
 	pink   = tcell.GetColor("pink").Hex()
 	red    = tcell.GetColor("red").Hex()
