@@ -126,8 +126,8 @@ func MustLoadConfig(
 	return
 }
 
-// GetConfigArgument must be called and only before flag.Parse().
-func GetConfigArgument() *string {
+// RegisterConfigArgument must be called and only before flag.Parse().
+func RegisterConfigArgument() *string {
 	const (
 		usage        = "Raw JSON data or a file path."
 		defaultValue = dataPath + "config.json"

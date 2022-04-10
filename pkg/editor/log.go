@@ -53,6 +53,8 @@ func (wrapper logrusWrapper) SetDebugMode(enabled bool) {
 	}
 }
 
+var logger Logger
+
 func GetLogger() Logger {
-	panic("implement me") // TODO: GetLogger().
+	return logger
 }
