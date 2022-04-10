@@ -20,6 +20,7 @@
 			"UnitControl": "Unit Control",
 			"UnitRadar": "Unit Radar",
 			"UnitLocate": "Unit Locate",
-		}
+		},
+		"PartFormat": "%s: %s (%s)"
 	}
 }
