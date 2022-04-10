@@ -64,33 +64,32 @@ func marqueeTitle(
 
 		mbText = append(mbText[1:], mbText[0])
 		var (
-			titleNew string
-			ok       bool
+			titleTrim string
+			ok        bool
 		)
 		for trim := 0; trim < mbTextLength; trim++ {
 			mbTextTrim := mbText[:mbTextLength-trim]
-			titleTrim := prefix + string(mbTextTrim)
+			titleTrim = prefix + string(mbTextTrim)
 			titleTrimLength := tview.TaggedStringWidth(titleTrim)
 			if titleTrimLength <= boxWidth {
-				titleNew = titleTrim
 				ok = true
 				app.Draw()
 				break
 			}
 		}
 
-		box.SetTitle(titleNew)
 		if !ok {
 			logger.Warnf(
 				"Not enough space to fit marquee title: %s",
-				titleNew,
+				titleTrim,
 			)
 			logger.Debugf(
 				"Total text width %d is greater than box wdith %d.",
-				tview.TaggedStringWidth(titleNew),
+				tview.TaggedStringWidth(titleTrim),
 				boxWidth,
 			)
 		}
+		box.SetTitle(titleTrim)
 
 		select {
 		case <-t.C:
