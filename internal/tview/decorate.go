@@ -15,7 +15,7 @@ import (
 func marqueeTitle(
 	app *tview.Application,
 	box *tview.Box,
-	syncChannel <-chan func() bool,
+	syncChannel <-chan func(runMarquee bool) bool,
 	useInnerWidth bool,
 	prefix, text string,
 ) {
@@ -43,6 +43,7 @@ func marqueeTitle(
 	}
 
 	t := time.NewTicker(time.Second / 3) // TODO: User-changable.
+	defer t.Stop()
 	mbText = append(mbText, ' ')
 	rolled := true
 	for {
@@ -52,52 +53,54 @@ func marqueeTitle(
 		} else {
 			_, _, boxWidth, _ = box.GetRect()
 		}
-		if titleWidth <= boxWidth {
+
+		runMarquee := titleWidth <= boxWidth
+		if runMarquee {
 			if rolled {
 				rolled = false
 				box.SetTitle(title)
 				app.Draw()
 			}
 			continue
-		}
-		rolled = true
+		} else {
+			rolled = true
 
-		mbText = append(mbText[1:], mbText[0])
-		var (
-			titleTrim      string
-			titleTrimWidth int
-			ok             bool
-		)
-		for trim := 0; trim < mbTextLength; trim++ {
-			mbTextTrim := mbText[:mbTextLength-trim]
-			titleTrim = prefix + string(mbTextTrim)
-			titleTrimWidth = tview.TaggedStringWidth(titleTrim)
-			if titleTrimWidth <= boxWidth {
-				ok = true
-				app.Draw()
-				break
+			mbText = append(mbText[1:], mbText[0])
+			var (
+				titleTrim      string
+				titleTrimWidth int
+				ok             bool
+			)
+			for trim := 0; trim < mbTextLength; trim++ {
+				mbTextTrim := mbText[:mbTextLength-trim]
+				titleTrim = prefix + string(mbTextTrim)
+				titleTrimWidth = tview.TaggedStringWidth(titleTrim)
+				if titleTrimWidth <= boxWidth {
+					ok = true
+					app.Draw()
+					break
+				}
 			}
-		}
 
-		if !ok {
-			logger.Warnf(
-				"Not enough space to fit the shortest trimmed marquee title: %s",
-				titleTrim,
-			)
-			logger.Debugf(
-				"Total width %d is greater than box wdith %d.",
-				titleTrimWidth,
-				boxWidth,
-			)
+			if !ok {
+				logger.Warnf(
+					"Not enough space to fit the shortest trimmed marquee title: %s",
+					titleTrim,
+				)
+				logger.Debugf(
+					"Total width %d is greater than box wdith %d.",
+					titleTrimWidth,
+					boxWidth,
+				)
+			}
+			box.SetTitle(titleTrim)
+
 		}
-		box.SetTitle(titleTrim)
 
 		select {
 		case <-t.C:
 		case syncFunc := <-syncChannel:
-			if syncFunc == nil || !syncFunc() {
-				t.Stop()
-
+			if syncFunc == nil || !syncFunc(runMarquee) {
 				return
 			}
 		}
