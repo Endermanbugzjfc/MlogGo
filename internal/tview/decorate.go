@@ -61,7 +61,6 @@ func marqueeTitle(
 				box.SetTitle(title)
 				app.Draw()
 			}
-			continue
 		} else {
 			rolled = true
 
@@ -94,7 +93,6 @@ func marqueeTitle(
 				)
 			}
 			box.SetTitle(titleTrim)
-
 		}
 
 		select {
