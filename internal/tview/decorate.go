@@ -15,7 +15,7 @@ import (
 func marqueeTitle(
 	app *tview.Application,
 	box *tview.Box,
-	syncChannel <-chan func(runMarquee bool) bool,
+	syncChannel <-chan func(running bool) (stop bool),
 	useInnerWidth bool,
 	prefix, text string,
 ) {
