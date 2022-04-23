@@ -15,7 +15,7 @@ import (
 func marqueeTitle(
 	app *tview.Application,
 	box *tview.Box,
-	syncChannel <-chan func(running bool) (stop bool),
+	syncChannel <-chan func(paused bool) (stop bool),
 	useInnerWidth bool,
 	prefix, text string,
 ) {
@@ -54,8 +54,8 @@ func marqueeTitle(
 			_, _, boxWidth, _ = box.GetRect()
 		}
 
-		runMarquee := titleWidth <= boxWidth
-		if runMarquee {
+		paused := titleWidth <= boxWidth
+		if paused {
 			if rolled {
 				rolled = false
 				box.SetTitle(title)
@@ -98,7 +98,7 @@ func marqueeTitle(
 		select {
 		case <-t.C:
 		case syncFunc := <-syncChannel:
-			if syncFunc == nil || !syncFunc(runMarquee) {
+			if syncFunc == nil || !syncFunc(paused) {
 				return
 			}
 		}
