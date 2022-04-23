@@ -19,6 +19,7 @@ func marqueeTitle(
 	useInnerWidth bool,
 	prefix, text string,
 ) {
+	// Box rect is not accurate until the first update.
 	firstUpdate := make(chan struct{})
 	app.QueueUpdate(func() {
 		close(firstUpdate)
