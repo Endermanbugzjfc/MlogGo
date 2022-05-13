@@ -1,22 +1,71 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/endermanbugzjfc/mloggo/pkg/editor"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	"github.com/sirupsen/logrus"
 )
 
 const (
-	version = "1.0.0"
-)
-
-var (
-	app       *tview.Application
-	root, add *tview.Flex
+	version   = "1.0.0"
+	corporate = `read result cell1 0
+write result cell1 0
+draw clear 0 1 2 0 0 0
+draw color 0 1 2 255 0 0
+draw stroke 0 1 2 255 0 0
+draw line 0 1 2 255 0 0
+draw rect 0 1 2 255 0 0
+draw lineRect 0 1 2 255 0 0
+draw poly 0 1 2 255 3 0
+draw linePoly 0 1 2 255 3 0
+draw triangle 0 1 2 255 3 4
+draw image 0 1 @copper 32 2 0
+print "frog"
+drawflush display1
+printflush message1
+getlink result 0
+control enabled block1 0 0 0 0
+control shoot block1 0 1 2 0
+control shootp block1 0 1 2 0
+control configure block1 0 1 2 0
+control color block1 0 1 2 0
+radar enemy any player distance turret1 1 result
+sensor result block1 @flarogus-lean
+set result 0
+op noise result a b
+end
+jump 25 equal x false
+jump 25 notEqual x false
+jump 25 lessThan x false
+jump 25 lessThanEq x false
+jump 25 greaterThan x false
+jump 25 greaterThanEq x false
+jump 25 strictEqual x false
+jump 25 always x false
+ubind @poly
+ucontrol idle 0 0 0 0 0
+ucontrol stop 0 0 0 0 0
+ucontrol move 0 1 0 0 0
+ucontrol approach 0 1 2 0 0
+ucontrol boost 0 1 2 0 0
+ucontrol pathfind 0 1 2 0 0
+ucontrol target 0 1 2 0 0
+ucontrol targetp 0 1 2 0 0
+ucontrol itemDrop 0 1 2 0 0
+ucontrol itemTake 0 1 2 0 0
+ucontrol payDrop 0 1 2 0 0
+ucontrol payTake 0 1 2 0 0
+ucontrol mine 0 1 2 0 0
+ucontrol flag 0 1 2 0 0
+ucontrol build 0 1 2 3 4
+ucontrol getBlock 0 1 2 3 4
+ucontrol within 0 1 2 3 4
+uradar enemy flying boss armor 0 1 result
+ulocate ore core true @copper outx outy found building`
 )
 
 func makeHeader(text string) string {
@@ -24,16 +73,19 @@ func makeHeader(text string) string {
 }
 
 func main() {
-	configArgument := editor.GetConfigArgument()
+	editor.Init()
+	logger := editor.GetLogger()
+	logger.SetDebugMode(true)
+	// configArgument := editor.RegisterConfigArgument()
 
-	flag.Parse()
+	// flag.Parse()
 
-	logrusLogger := logrus.StandardLogger()
-	editor.InitLogrus(logrusLogger)
-	log := editor.LogrusToEditorLogger(logrusLogger)
+	// logrusLogger := logrus.StandardLogger()
+	// editor.InitLogrus(logrusLogger)
+	// log := editor.LogrusToEditorLogger(logrusLogger)
 
-	config := editor.MustLoadConfig(log, *configArgument)
-	defaultKeys := editor.DefaultConfig().Keys
+	// editor.MustLoadConfig(log, *configArgument)
+	// defaultKeys := editor.DefaultConfig().Keys
 	// header := makeHeader("Make in Hong Kong \u1F1F")
 
 	// box.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
@@ -42,115 +94,59 @@ func main() {
 	// 	return event
 	// })
 
-	app = tview.NewApplication()
-	root = tview.
-		NewFlex().
-		SetFullScreen(true).
-		SetDirection(tview.FlexRow)
-	root.SetBackgroundColor(tview.Styles.PrimitiveBackgroundColor)
-
-	add = tview.NewFlex()
-	root.AddItem(add, 0, 1, false)
-
-	add.
-		SetBorder(true).
-		SetTitle("Add Action Block").
-		SetTitleAlign(tview.AlignLeft)
-
-	addA := tview.NewList()
-	add.AddItem(addA, 0, 1, false)
-
-	addB := tview.NewList()
-	add.AddItem(addB, 0, 1, false)
-
-	keys := config.Keys
-
-	for _, box := range [2]*tview.List{
-		addA,
-		addB,
-	} {
-		func(box *tview.List) {
-			colour := box.GetBackgroundColor()
-			box.
-				SetFocusFunc(func() {
-					box.
-						SetBackgroundColor(colour).
-						SetTitle(fmt.Sprintf("(%s: Go to the other side.)", keys.SwitchCodeBlockList)).
-						SetBorder(true)
-				}).
-				SetBlurFunc(func() {
-					box.
-						SetBackgroundColor(tcell.ColorDarkGray).
-						SetTitle("")
-				}).
-				SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-					// TODO: Customise key in config.
-					if event.Rune() == 'W' {
-						if box == addA {
-							app.SetFocus(addB)
-						} else {
-							app.SetFocus(addA)
-						}
-					}
-
-					return event
-				})
-		}(box)
-	}
-
-	addA.
-		AddItem("[pink]Read", "Read a number from a linked memory cell.", keys.Read.GetRune(log, rune(defaultKeys.Read[0])), addCodeBlock(0)).
-		AddItem("[pink]Draw", "", keys.Draw.GetRune(log, rune(defaultKeys.Draw[0])), addCodeBlock(1)).
-		AddItem("[red]Draw Flush", "Flush queued [yellow]Draw [green]operations to a displau.", keys.DrawFlush.GetRune(log, rune(defaultKeys.DrawFlush[0])), addCodeBlock(2)).
-		AddItem("[red]Get Link", "", keys.GetLink.GetRune(log, rune(defaultKeys.GetLink[0])), addCodeBlock(3)).
-		AddItem("[red]Radar", "", keys.Radar.GetRune(log, rune(defaultKeys.Radar[0])), addCodeBlock(4)).
-		AddItem("[purple]Set", "", keys.Set.GetRune(log, rune(defaultKeys.Set[0])), addCodeBlock(5)).
-		AddItem("[blue]End", "", keys.End.GetRune(log, rune(defaultKeys.End[0])), addCodeBlock(6)).
-		AddItem("[yellow]Unit Bind", "", keys.UnitBind.GetRune(log, rune(defaultKeys.UnitBind[0])), addCodeBlock(7)).
-		AddItem("[yellow]Unit Radar", "", keys.UnitRadar.GetRune(log, rune(defaultKeys.UnitRadar[0])), addCodeBlock(8))
-
-	addB.
-		AddItem("[pink]Write", "Write a number to a linked memory cell.", keys.Write.GetRune(log, rune(defaultKeys.Write[0])), addCodeBlock(9)).
-		AddItem("[pink]Print", "", keys.Print.GetRune(log, rune(defaultKeys.Print[0])), addCodeBlock(10)).
-		AddItem("[red]Print Flush", "", keys.PrintFlush.GetRune(log, rune(defaultKeys.PrintFlush[0])), addCodeBlock(11)).
-		AddItem("[red]Control", "", keys.Control.GetRune(log, rune(defaultKeys.Control[0])), addCodeBlock(12)).
-		AddItem("[red]Sensor", "", keys.Sensor.GetRune(log, rune(defaultKeys.Sensor[0])), addCodeBlock(13)).
-		AddItem("[purple]Operation", "", keys.Operation.GetRune(log, rune(defaultKeys.Operation[0])), addCodeBlock(14)).
-		AddItem("[blue]Jump", "", keys.Jump.GetRune(log, rune(defaultKeys.Jump[0])), addCodeBlock(15)).
-		AddItem("[yellow]Unit Control", "", keys.UnitControl.GetRune(log, rune(defaultKeys.UnitControl[0])), addCodeBlock(16)).
-		AddItem("[yellow]Unit Locate", "", keys.UnitLocate.GetRune(log, rune(defaultKeys.UnitLocate[0])), addCodeBlock(17)).
-		Blur()
-
-	if err := app.
-		SetRoot(root, true).
-		SetFocus(addA).
-		Run(); err != nil {
-		panic(err)
-	}
-}
-
-func addCodeBlock(codeBlockType int) func() {
-	// TODO: Replace type with enum.
-	asyncRemoveItemChannel := make(chan struct{})
-	go func(asyncRemoveItemChannel chan struct{}) {
-		<-asyncRemoveItemChannel
-		root.RemoveItem(add)
-
-		block := tview.NewFlex()
-		block.SetBorder(true)
-		switch codeBlockType {
+	app := tview.NewApplication()
+	defer func() {
+		if err := app.Run(); err != nil {
+			panic(err)
 		}
+	}()
 
-		block.SetTitleAlign(tview.AlignLeft)
-		block.AddItem(tview.NewBox(), 0, 1, false)
-		root.AddItem(block, 0, 1, false)
-		app.SetFocus(block)
-	}(asyncRemoveItemChannel)
+	horizontal := tview.NewFlex().SetFullScreen(true)
+	defer app.SetRoot(horizontal, true).SetFocus(horizontal)
+	horizontal.SetBorder(true).SetTitleAlign(tview.AlignLeft)
+	horizontalTitleStop := make(chan func(running bool) (stop bool))
+	go marqueeTitle(app, horizontal.Box, horizontalTitleStop, true, "Read: ", `朋友是一個堅忍不拔的紀錄片 Lorem ipsum dolor sit amet`)
 
-	return func() {
-		select {
-		case asyncRemoveItemChannel <- struct{}{}:
-		default:
+	editorView := tview.NewTextView().
+		SetDynamicColors(true).
+		SetRegions(true).
+		SetChangedFunc(func() {
+			app.Draw()
+		})
+	defer horizontal.AddItem(editorView, 0, 10, true)
+
+	numSelections := 0
+	go func() {
+		for _, word := range strings.Split(corporate, " ") {
+			if word == "the" {
+				word = "[red]the[white]"
+			}
+			if word == "to" {
+				word = fmt.Sprintf(`["%d"]to[""]`, numSelections)
+				numSelections++
+			}
+			fmt.Fprintf(editorView, "%s ", word)
+			// time.Sleep(200 * time.Millisecond)
 		}
-	}
+	}()
+	editorView.SetDoneFunc(func(key tcell.Key) {
+		currentSelection := editorView.GetHighlights()
+		if key == tcell.KeyEnter {
+			if len(currentSelection) > 0 {
+				editorView.Highlight()
+			} else {
+				editorView.Highlight("0").ScrollToHighlight()
+			}
+		} else if len(currentSelection) > 0 {
+			index, _ := strconv.Atoi(currentSelection[0])
+			if key == tcell.KeyTab {
+				index = (index + 1) % numSelections
+			} else if key == tcell.KeyBacktab {
+				index = (index - 1 + numSelections) % numSelections
+			} else {
+				return
+			}
+			editorView.Highlight(strconv.Itoa(index)).ScrollToHighlight()
+		}
+	})
 }
